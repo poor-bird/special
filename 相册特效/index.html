@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>相册特效</title>
+    <style>
+        *{margin: 0;padding: 0;}
+        body{
+            width: 100%;
+            /* height: 100%; */
+            background: black;
+        }
+        .box{
+            position: relative;
+            width:100%;
+            height: 250px;
+            margin-top: 100px;
+            /* 创建透视 */
+            -webkit-transform-style: preserve-3d;
+            /* 透视距离 */
+            -webkit-perspective: 800px;
+        }
+        .box img{
+            position: absolute;
+            width: 300px;
+            height: 250px;
+            transition: 0.8s;
+            /* 创建倒影 */
+            -webkit-box-reflect: below 0 -webkit-linear-gradient(top,rgba(0,0,0,.1),rgba(0,0,0,.5));
+            /* transform: rotateY(45deg) */
+        }
+        .left{
+            transform: rotateY(45deg) translateZ(-100px);
+        }
+        .right{
+            transform: rotateY(-45deg) translateZ(-100px);
+        }
+        .now{
+            transform: translateZ(100px);
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <img src="./images/1.jpg" alt="">
+        <img src="./images/2.jpg" alt="">
+        <img src="./images/3.jpg" alt="">
+        <img src="./images/4.jpg" alt="">
+        <img src="./images/5.jpg" alt="">
+        <img src="./images/6.jpg" alt="">
+        <img src="./images/7.jpg" alt="">
+        <img src="./images/8.jpg" alt="">
+        <img src="./images/9.jpg" alt="">
+        <img src="./images/10.jpg" alt="">
+        <img src="./images/11.jpg" alt="">
+    </div>
+    <script>
+        let box = document.getElementsByClassName('box')[0];
+        let oImg = document.getElementsByTagName('img');
+        let leng = oImg.length;
+        let imgWth = parseFloat(getStyle(oImg[0])["width"]);
+        let winWth = document.body.clientWidth;  //屏幕宽度
+        let nowIdx = 0;  //当前图片索引
+        // 布局添加类名
+        for (let i = 0; i < oImg.length; i++) {
+            if (i < Math.floor(leng/2)) {
+                oImg[i].classList.add("left")
+            }else if(i >  Math.floor(leng/2)){
+                oImg[i].classList.add("right")
+            }else{
+                oImg[i].classList.add("now");
+                nowIdx = i;//更新当前索引
+            }
+        }
+
+        // 事件点击
+        for (let i = 0; i < leng; i++) {
+            // 图片位置计算
+            oImg[i].style.left = winWth/2 - imgWth/2 - 100*(nowIdx - i) +"px";
+            // 事件
+            oImg[i].onclick = function(){  //图片的点击事件
+                let index = i; // 获取每个图片的索引
+                for (let j = 0; j < leng; j++) {
+                    let imgLeft = parseFloat(getStyle(oImg[j])["left"]) + 100*(nowIdx - index) ;
+                    oImg[j].style.left = imgLeft + "px";
+                }
+                // 图片交换
+                for (let i = 0; i < leng; i++) {
+                    if (i < index) {
+                        oImg[i].classList.add("left");
+                        oImg[i].classList.remove("right");
+                        oImg[i].classList.remove("now");
+                    }else if(i > index){
+                        oImg[i].classList.add("right");
+                        oImg[i].classList.remove("left");
+                        oImg[i].classList.remove("now");
+                    }else{
+                        oImg[index].classList.add("now");
+                        oImg[index].classList.remove("left");
+                        oImg[index].classList.remove("right");
+                    }
+                }
+                nowIdx = i;
+            }
+            
+        }
+        
+        function getStyle(ele){
+            return getComputedStyle(ele) || ele.currentStyle;
+        }
+    </script>
+</body>
+</html>
